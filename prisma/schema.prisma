@@ -1,0 +1,55 @@
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  username  String
+  email     String
+  password  String
+  role      String   @default("participant")
+  coins     Int      @default(0)
+  events    Event[]
+  compIDs   String[] @db.ObjectId
+  comps     Comp[]   @relation(fields: [compIDs], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Event {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  slug        String   @unique
+  poster      String
+  title       String
+  description String
+  venue       String
+  date        String
+  uid         String   @db.ObjectId
+  users       User     @relation(fields: [uid], references: [id])
+  comps       Comp[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Comp {
+  id             String   @id @default(auto()) @map("_id") @db.ObjectId
+  slug           String   @unique
+  poster         String
+  title          String
+  description    String
+  venue          String
+  date           String
+  eventId        String   @db.ObjectId
+  event          Event    @relation(fields: [eventId], references: [id])
+  isRegistering  Boolean  @default(false)
+  isVerified     Boolean  @default(false)
+  participantIDs String[] @db.ObjectId
+  participants   User[]   @relation(fields: [participantIDs], references: [id])
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
