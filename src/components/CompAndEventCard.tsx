@@ -17,7 +17,7 @@ import { Comp, Event } from "@prisma/client";
 
 interface Props {
   comp?: Comp & {
-    event: {
+    event?: {
       title: string;
     };
   };

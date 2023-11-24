@@ -1,5 +1,6 @@
-import CompAndEventCard from "./CompAndEventCard";
+
 import { serverClient } from "@/app/_trpc/serverClient";
+import CompAndEventCard from "./CompAndEventCard";
 
 interface Props {
   slug: string;
@@ -15,7 +16,7 @@ const Comp = async ({ slug, path }: Props) => {
         {comps.map((comp, i) => (
           <CompAndEventCard
             key={comp.id}
-            info={comp}
+            comp={comp}
             type={"comp"}
             isRegistering
           />
