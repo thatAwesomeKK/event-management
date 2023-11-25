@@ -7,12 +7,21 @@ const CompsSection = () => {
   const searchParams = useSearchParams();
   const event = searchParams.get("event");
 
-  const { data: comps } = trpc.comp.get.useQuery({ slug: event! });
+  const { data: comps } = trpc.comp.get.useQuery(
+    { slug: event! },
+    {
+      retry: true,
+      retryDelay: 500,
+    }
+  );
+
+  console.log(comps);
+  
 
   return (
     <>
       {comps?.map((comp, i) => (
-        <CompAndEventCard key={comp.id} comp={comp} where="dashboard"/>
+        <CompAndEventCard key={comp.id} comp={comp} where="dashboard" />
       ))}
     </>
   );

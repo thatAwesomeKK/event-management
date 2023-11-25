@@ -7,7 +7,7 @@ import { SessionProvider } from "next-auth/react";
 import { ThemeProvider } from "./theme-provider";
 import "react-toastify/dist/ReactToastify.css";
 import ToastProvider from "./ToastProvider";
-import superjson from "superjson"
+import superjson from "superjson";
 
 const Providers = ({ children }: PropsWithChildren) => {
   const [queryClient] = useState(() => new QueryClient());
@@ -15,10 +15,10 @@ const Providers = ({ children }: PropsWithChildren) => {
     trpc.createClient({
       links: [
         httpBatchLink({
-          url: "http://localhost:3000/api/trpc",
+          url: `${process.env.NEXTAUTH_URL}/api/trpc`,
         }),
       ],
-      transformer: superjson
+      transformer: superjson,
     })
   );
 
