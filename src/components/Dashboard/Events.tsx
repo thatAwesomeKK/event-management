@@ -19,9 +19,7 @@ const Events = async () => {
         ))}
       </div>
       <div className="flex-1">
-        <Suspense fallback={<>Loading...</>}>
-          <CompsSection />
-        </Suspense>
+        <CompsSection />
       </div>
     </section>
   );
