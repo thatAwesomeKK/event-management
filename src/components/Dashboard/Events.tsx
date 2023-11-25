@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Suspense } from "react";
 import CompAndEventCard from "../CompAndEventCard";
 import { serverClient } from "@/app/_trpc/serverClient";
 import CompsSection from "./CompsSection";
@@ -19,7 +19,9 @@ const Events = async () => {
         ))}
       </div>
       <div className="flex-1">
-        <CompsSection />
+        <Suspense fallback={<>Loading...</>}>
+          <CompsSection />
+        </Suspense>
       </div>
     </section>
   );

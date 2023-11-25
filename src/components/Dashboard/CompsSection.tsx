@@ -7,16 +7,9 @@ const CompsSection = () => {
   const searchParams = useSearchParams();
   const event = searchParams.get("event");
 
-  const { data: comps } = trpc.comp.get.useQuery(
-    { slug: event! },
-    {
-      retry: true,
-      retryDelay: 500,
-    }
-  );
+  const { data: comps } = trpc.comp.get.useQuery({ slug: event! });
 
   console.log(comps);
-  
 
   return (
     <>
