@@ -15,7 +15,7 @@ const Providers = ({ children }: PropsWithChildren) => {
     trpc.createClient({
       links: [
         httpBatchLink({
-          url: `${process.env.NEXTAUTH_URL}/api/trpc`,
+          url: `${process.env.NEXT_PUBLIC_URL}/api/trpc`,
         }),
       ],
       transformer: superjson,
