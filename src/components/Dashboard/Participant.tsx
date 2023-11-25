@@ -15,7 +15,6 @@ const Participant = async () => {
           <CompAndEventCard
             key={i}
             comp={comp}
-            type={"comp"}
             where={"dashboard"}
           />
         ))}

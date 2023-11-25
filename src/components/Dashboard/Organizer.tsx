@@ -17,7 +17,7 @@ function Organizer() {
           Create Competition
         </Link>
         <Link
-          href="/dash/organizer/all-events"
+          href="/dash/organizer/all-events/"
           className="font-semibold text-lg cursor-pointer transition-all hover:scale-105 active:text-gray-100"
         >
           All Events

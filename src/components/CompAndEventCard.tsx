@@ -12,7 +12,7 @@ import {
   CardTitle,
 } from "./ui/card";
 import { Separator } from "./ui/separator";
-import { buttonVariants } from "./ui/button";
+import { Button, buttonVariants } from "./ui/button";
 import { Comp, Event } from "@prisma/client";
 
 interface Props {
@@ -21,40 +21,42 @@ interface Props {
       title: string;
     };
   };
-  type: string;
   isRegistering?: boolean;
   where?: string;
+  edit?: boolean;
 }
 
 interface Props {
   event?: Event;
-  type: string;
   isRegistering?: boolean;
   where?: string;
+  edit?: boolean;
 }
 
 const CompAndEventCard = ({
   comp,
   event,
-  type,
   isRegistering,
   where,
+  edit = false,
 }: Props) => {
   return (
-    <Card className="flex flex-col h-fit shadow-lg shadow-secondary">
-      <div className="flex">
+    <Card className="shadow-lg shadow-secondary w-[22rem] lg:w-96">
+      {comp?.poster || event?.poster ? (
         <CardHeader className="flex-1 flex justify-center items-center">
           <Image
             className="rounded-lg"
             src={comp?.poster! || event?.poster || ""}
             alt="Movie"
             height={100}
-            width={200}
+            width={300}
           />
         </CardHeader>
-        <Separator className="h-80 mt-3" orientation="vertical" />
-        <CardContent className="flex-1 flex flex-col justify-evenly items-center">
-          <CardTitle>{comp?.title || event?.title}</CardTitle>
+      ) : (
+        <CardContent className="flex-1 hidden lg:flex flex-col justify-evenly items-center">
+          <CardTitle className="text-lg">
+            {comp?.title || event?.title}
+          </CardTitle>
           <DateShowcase date={comp?.date || event?.date || ""} />
           <CardDescription className="line-clamp-6 w-full">
             {comp?.event?.title && (
@@ -66,15 +68,24 @@ const CompAndEventCard = ({
             {comp?.description || event?.description}
           </CardDescription>
         </CardContent>
-      </div>
-      {where !== "dashboard" && (
-        <>
-          <Separator
-            className="my-1 w-[97%] mx-auto"
-            orientation="horizontal"
-          />
-          <CardFooter className="flex-1 mt-2">
-            {isRegistering ? (
+      )}
+      <CardFooter className="flex-1 mt-2">
+        {edit && (
+          <Link
+            href={`?event=${event?.slug}`}
+            className={buttonVariants({ className: "w-full py-6" })}
+          >
+            Get Comps
+          </Link>
+        )}
+        {where !== "dashboard" ? (
+          <div className="w-full">
+            <Separator
+              className="my-1 w-[97%] mx-auto mb-2"
+              orientation="horizontal"
+            />
+
+            {isRegistering && !edit ? (
               <Link
                 className={buttonVariants({ className: "w-full py-6" })}
                 href={`/event/${comp?.eventId}/${comp?.slug}`}
@@ -89,9 +100,20 @@ const CompAndEventCard = ({
                 Learn More!
               </Link>
             )}
-          </CardFooter>
-        </>
-      )}
+          </div>
+        ) : (
+          <>
+            {comp && (
+              <Link
+                className={buttonVariants({ className: "w-full py-6" })}
+                href={`all-events/${comp?.slug}`}
+              >
+                Edit
+              </Link>
+            )}
+          </>
+        )}
+      </CardFooter>
     </Card>
   );
 };

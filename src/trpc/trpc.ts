@@ -1,7 +1,10 @@
 import { getAuthSession } from "@/lib/config/authOptions";
 import { TRPCError, initTRPC } from "@trpc/server";
+import superjson from "superjson";
 
-const t = initTRPC.create();
+const t = initTRPC.create({
+  transformer: superjson,
+});
 const middleware = t.middleware;
 
 const isAuth = middleware(async (opts) => {

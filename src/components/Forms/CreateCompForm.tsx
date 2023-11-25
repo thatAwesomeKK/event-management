@@ -11,7 +11,7 @@ import {
 import DatePicker from "react-date-picker";
 import { Input } from "../ui/input";
 import * as z from "zod";
-import { SetStateAction, useRef, useState } from "react";
+import { SetStateAction, useEffect, useRef, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Button } from "../ui/button";
@@ -24,20 +24,36 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
-import { Event } from "@prisma/client";
+import { Comp, Event } from "@prisma/client";
 import { trpc } from "@/app/_trpc/client";
 import { Card } from "../ui/card";
 import { alertCall } from "@/lib/toast/alertCall";
+import { Checkbox } from "../ui/checkbox";
 
 const formSchema = z.object({
   title: z.string().min(6),
   venue: z.string(),
   desc: z.string().min(10),
   eventId: z.string(),
+  isRegistering: z.boolean().default(false).optional(),
+  isVerified: z.boolean().default(false).optional(),
 });
 
-const CreateCompForm = ({ initialEvents }: { initialEvents: Event[] }) => {
-  const [profileImg, setProfileImg] = useState<string | null>(null);
+const CreateCompForm = ({
+  initialEvents,
+  initialComp,
+}: {
+  initialEvents?: Event[];
+  initialComp?: Comp & {
+    event: {
+      title: string;
+      id: string;
+    };
+  };
+}) => {
+  const [profileImg, setProfileImg] = useState<string | null>(
+    initialComp?.poster || ""
+  );
   const [startDate, setStartDate] = useState(new Date());
   const [loading, setLoading] = useState(false);
   const uploadProfileImgRef = useRef<HTMLInputElement>(null);
@@ -47,10 +63,12 @@ const CreateCompForm = ({ initialEvents }: { initialEvents: Event[] }) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      title: "",
-      venue: "",
-      desc: "",
+      title: initialComp?.title || "",
+      venue: initialComp?.venue || "",
+      desc: initialComp?.description || "",
       eventId: "",
+      isRegistering: initialComp?.isRegistering,
+      isVerified: initialComp?.isVerified,
     },
   });
 
@@ -93,7 +111,7 @@ const CreateCompForm = ({ initialEvents }: { initialEvents: Event[] }) => {
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="space-y-8 p-10 rounded-lg w-[25vw]"
+          className="space-y-8 p-10 rounded-lg w-[87vw] lg:w-[25vw]"
         >
           <div
             className="cursor-pointer"
@@ -124,34 +142,76 @@ const CreateCompForm = ({ initialEvents }: { initialEvents: Event[] }) => {
             onChange={(value) => setStartDate(value as SetStateAction<Date>)}
             value={startDate}
           />
-          <FormField
-            control={form.control}
-            name="eventId"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Event</FormLabel>
-                <Select onValueChange={field.onChange}>
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select an Event" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {initialEvents?.map((event, i) => (
-                      <SelectItem
-                        className="capitalize"
-                        key={i}
-                        value={event.id}
-                      >
-                        {event.title}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          {!initialComp && (
+            <FormField
+              control={form.control}
+              name="eventId"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Event</FormLabel>
+                  <Select onValueChange={field.onChange}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select an Event" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {initialEvents?.map((event, i) => (
+                        <SelectItem
+                          className="capitalize"
+                          key={i}
+                          value={event.id}
+                        >
+                          {event.title}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          )}
+          {initialComp && (
+            <>
+              <FormField
+                control={form.control}
+                name="isRegistering"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                    <FormControl>
+                      <Checkbox
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
+                    <div className="space-y-1 leading-none">
+                      <FormLabel>Registering ?</FormLabel>
+                    </div>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="isVerified"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                    <FormControl>
+                      <Checkbox
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
+                    <div className="space-y-1 leading-none">
+                      <FormLabel>Verified ?</FormLabel>
+                    </div>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </>
+          )}
           <FormField
             control={form.control}
             name="title"

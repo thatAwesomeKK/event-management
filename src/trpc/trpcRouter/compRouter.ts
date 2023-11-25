@@ -35,6 +35,14 @@ export const compRouter = router({
         where: {
           slug,
         },
+        include: {
+          event: {
+            select: {
+              title: true,
+              id: true,
+            },
+          },
+        },
       });
       return comp;
     }),

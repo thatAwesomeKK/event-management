@@ -12,7 +12,7 @@ const Navbar = async () => {
     <nav className="sticky top-0 shadow-md shadow-secondary z-50 flex justify-between items-center h-16 px-8 bg-background">
       <div className="">
         <Link
-          href="http://localhost:3000/"
+          href="/"
           className="normal-case text-2xl text-primary font-semibold"
         >
           Eventator
