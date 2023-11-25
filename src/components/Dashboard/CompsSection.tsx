@@ -9,8 +9,6 @@ const CompsSection = () => {
 
   const { data: comps } = trpc.comp.get.useQuery({ slug: event! });
 
-  console.log(comps);
-
   return (
     <>
       {comps?.map((comp, i) => (

@@ -8,16 +8,12 @@ interface PageProps {
     dashType: string;
     actionType: string;
   };
-  searchParams: {
-    event: string;
-  };
 }
 
-export const dynamic = 'force-dynamic'
+export const dynamic = "force-dynamic";
 
 export default async function Action({
   params: { dashType, actionType },
-  searchParams: { event },
 }: PageProps) {
   if (dashType === "organizer" && actionType === "create-event")
     return (
