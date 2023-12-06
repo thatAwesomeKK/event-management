@@ -1,6 +1,11 @@
 import SignUpForm from "@/components/Forms/SignUpForm";
+import { getAuthSession } from "@/lib/config/authOptions";
 import Link from "next/link";
-const SignUp = () => {
+import { redirect } from "next/navigation";
+
+const SignUp = async () => {
+  const session = await getAuthSession();
+  if (session?.user) redirect("/");
   return (
     <main className="min-h-screen flex flex-col justify-center items-center">
       <div className="mb-10">

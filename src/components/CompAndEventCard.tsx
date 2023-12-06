@@ -70,7 +70,7 @@ const CompAndEventCard = ({
         </CardContent>
       )}
       <CardFooter className="flex-1 mt-2">
-        {edit && (
+        {event && edit && (
           <Link
             href={`?event=${event?.slug}`}
             className={buttonVariants({ className: "w-full py-6" })}
@@ -103,13 +103,15 @@ const CompAndEventCard = ({
           </div>
         ) : (
           <>
-            {comp && (
+            {comp && edit ? (
               <Link
                 className={buttonVariants({ className: "w-full py-6" })}
                 href={`all-events/${comp?.slug}`}
               >
                 Edit
               </Link>
+            ) : (
+              ""
             )}
           </>
         )}

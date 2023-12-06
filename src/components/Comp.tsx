@@ -12,7 +12,7 @@ const Comp = async ({ slug, path }: Props) => {
 
   return (
     <section className="my-10 max-w-[85%] mx-auto">
-      <div className="grid grid-cols-3 gap-10 justify-center items-center">
+      <div className="md:grid md:grid-cols-3 gap-10 justify-center items-center flex flex-col">
         {comps.map((comp, i) => (
           <CompAndEventCard
             key={comp.id}

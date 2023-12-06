@@ -1,27 +1,12 @@
 "use client";
-import { PropsWithChildren, useState } from "react";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { trpc } from "@/app/_trpc/client";
-import { httpBatchLink } from "@trpc/client";
+import { PropsWithChildren } from "react";
 import { SessionProvider } from "next-auth/react";
 import { ThemeProvider } from "./theme-provider";
 import "react-toastify/dist/ReactToastify.css";
 import ToastProvider from "./ToastProvider";
-import superjson from "superjson";
+import TRPCProvider from "./TRPCProvider";
 
 const Providers = ({ children }: PropsWithChildren) => {
-  const [queryClient] = useState(() => new QueryClient());
-  const [trpcClient] = useState(() =>
-    trpc.createClient({
-      links: [
-        httpBatchLink({
-          url: `${process.env.NEXT_PUBLIC_URL}/api/trpc`,
-        }),
-      ],
-      transformer: superjson,
-    })
-  );
-
   return (
     <ToastProvider>
       <ThemeProvider
@@ -30,11 +15,9 @@ const Providers = ({ children }: PropsWithChildren) => {
         enableSystem
         disableTransitionOnChange
       >
-        <trpc.Provider client={trpcClient} queryClient={queryClient}>
-          <QueryClientProvider client={queryClient}>
-            <SessionProvider>{children}</SessionProvider>
-          </QueryClientProvider>
-        </trpc.Provider>
+        <TRPCProvider>
+          <SessionProvider>{children}</SessionProvider>
+        </TRPCProvider>
       </ThemeProvider>
     </ToastProvider>
   );
