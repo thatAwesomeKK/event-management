@@ -12,7 +12,7 @@ const CompsSection = () => {
   return (
     <>
       {comps?.map((comp, i) => (
-        <CompAndEventCard key={comp.id} comp={comp} where="dashboard" />
+        <CompAndEventCard key={comp.id} comp={comp} where="dashboard" edit={true} />
       ))}
     </>
   );
