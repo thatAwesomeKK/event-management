@@ -11,7 +11,7 @@ const CompsSection = () => {
     data: comps,
     isLoading,
     isFetching,
-  } = trpc.comp.get.useQuery({ slug: event! });
+  } = trpc.comp.getAdminComps.useQuery({ slug: event! });
 
   if (isLoading && event) return <p>Loading...</p>;
   return (
