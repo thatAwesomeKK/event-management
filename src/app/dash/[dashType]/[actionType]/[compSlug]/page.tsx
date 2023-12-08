@@ -9,6 +9,8 @@ interface PageProps {
   };
 }
 
+export const dynamic = "force-dynamic";
+
 const CompEdit = async ({ params: { compSlug } }: PageProps) => {
   const comp = await serverClient.comp.getBySlug({ slug: compSlug });
   const events = await serverClient.event.get();
@@ -16,7 +18,11 @@ const CompEdit = async ({ params: { compSlug } }: PageProps) => {
   return (
     <main className="flex justify-center items-start min-h-[100vh] mt-10">
       <Card className="flex-1 flex justify-center items-center">
-        <CreateCompForm initialEvents={events} initialComp={comp!} />
+        <CreateCompForm
+          initialEvents={events}
+          initialComp={comp!}
+          update={true}
+        />
       </Card>
       <div className="flex-1">
         <Participants initialParticipants={comp?.participants} />

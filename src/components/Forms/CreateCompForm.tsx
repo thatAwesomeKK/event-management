@@ -29,6 +29,7 @@ import { trpc } from "@/app/_trpc/client";
 import { Card } from "../ui/card";
 import { alertCall } from "@/lib/toast/alertCall";
 import { Checkbox } from "../ui/checkbox";
+import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
   title: z.string().min(6),
@@ -42,6 +43,7 @@ const formSchema = z.object({
 const CreateCompForm = ({
   initialEvents,
   initialComp,
+  update = false,
 }: {
   initialEvents?: Event[];
   initialComp?: Comp & {
@@ -50,7 +52,9 @@ const CreateCompForm = ({
       id: string;
     };
   };
+  update?: boolean;
 }) => {
+  const router = useRouter();
   const [profileImg, setProfileImg] = useState<string | null>(
     initialComp?.poster || ""
   );
@@ -58,7 +62,9 @@ const CreateCompForm = ({
   const [loading, setLoading] = useState(false);
   const uploadProfileImgRef = useRef<HTMLInputElement>(null);
 
-  const createComp = trpc.comp.create.useMutation();
+  const compHook = update
+    ? trpc.comp.update.useMutation()
+    : trpc.comp.create.useMutation();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -67,8 +73,8 @@ const CreateCompForm = ({
       venue: initialComp?.venue || "",
       desc: initialComp?.description || "",
       eventId: "",
-      isRegistering: initialComp?.isRegistering,
-      isVerified: initialComp?.isVerified,
+      isRegistering: initialComp?.isRegistering || false,
+      isVerified: initialComp?.isVerified || false,
     },
   });
 
@@ -84,8 +90,12 @@ const CreateCompForm = ({
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setLoading(true);
-    await createComp.mutateAsync(
+    console.log({ ...values, poster: profileImg, date: startDate.toString() });
+    console.log(update);
+
+    await compHook.mutateAsync(
       {
+        id: initialComp?.id,
         ...values,
         poster: profileImg!,
         date: startDate.toString(),
@@ -93,13 +103,17 @@ const CreateCompForm = ({
       {
         onSuccess: () => {
           setLoading(false);
-          form.reset();
-          alertCall("success", "Competition Created!");
+          alertCall(
+            "success",
+            `${update ? "Updated" : "Created"} Successfully`
+          );
+          router.refresh();
         },
         onError: (err) => {
           if (err.data?.code === "CONFLICT") {
             setLoading(false);
             alertCall("error", "Some Error occurred");
+            router.refresh();
           }
         },
       }

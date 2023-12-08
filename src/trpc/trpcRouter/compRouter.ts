@@ -23,6 +23,27 @@ export const compRouter = router({
       const comps = await db.comp.findMany({
         where: {
           eventId: dbEventSlug.id,
+          isRegistering: true,
+        },
+      });
+      return comps;
+    }),
+  getAdminComps: privateProcedure
+    .input(z.object({ slug: z.string() }))
+    .query(async ({ input: { slug } }) => {
+      const dbEventSlug = await db.event.findFirst({
+        where: {
+          slug,
+        },
+      });
+
+      if (!dbEventSlug) {
+        throw new TRPCError({ code: "BAD_REQUEST" });
+      }
+
+      const comps = await db.comp.findMany({
+        where: {
+          eventId: dbEventSlug.id,
         },
       });
       return comps;
@@ -97,6 +118,77 @@ export const compRouter = router({
             date,
             venue,
           },
+        });
+      }
+    ),
+  update: privateProcedure
+    .input(
+      z.object({
+        id: z.string().optional(),
+        poster: z.string(),
+        title: z.string(),
+        desc: z.string(),
+        date: z.string(),
+        venue: z.string(),
+        eventId: z.string(),
+        isRegistering: z.boolean().optional(),
+        isVerified: z.boolean().optional(),
+      })
+    )
+    .mutation(
+      async ({
+        ctx,
+        input: {
+          id,
+          poster,
+          title,
+          desc,
+          date,
+          venue,
+          eventId,
+          isRegistering,
+          isVerified,
+        },
+      }) => {
+        const { user } = ctx;
+
+        const dbComp = await db.comp.findUnique({
+          where: {
+            id,
+          },
+        });
+
+        if (!dbComp) {
+          throw new TRPCError({ code: "CONFLICT" });
+        }
+
+        let updComp: any = {};
+
+        if (dbComp.poster !== poster) {
+          const response = await cloudinary.uploader.upload(poster, {
+            resource_type: "auto",
+            folder: "event",
+          });
+          updComp.poster = response.secure_url;
+        }
+        if (dbComp.title !== title) updComp.title = title;
+
+        if (dbComp.description !== desc) updComp.description = desc;
+
+        if (dbComp.date !== date) updComp.date = date;
+
+        if (dbComp.venue !== venue) updComp.venue = venue;
+
+        if (dbComp.isRegistering !== isRegistering)
+          updComp.isRegistering = isRegistering;
+
+        if (dbComp.isVerified !== isVerified) updComp.isVerified = isVerified;
+
+        await db.comp.update({
+          where: {
+            id,
+          },
+          data: updComp,
         });
       }
     ),
