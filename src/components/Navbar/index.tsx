@@ -22,7 +22,7 @@ const Navbar = async () => {
         <div className="">
           <ThemeToggle/>
         </div>
-        <UserDropdown>
+        <UserDropdown session={session}>
           <DropdownMenuTrigger>
             <Avatar>
               <AvatarImage

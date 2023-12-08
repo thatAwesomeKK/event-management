@@ -12,13 +12,15 @@ import {
 import { signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { LogInIcon, LogOutIcon, SettingsIcon, UserCircle2 } from "lucide-react";
+import { Session } from "next-auth";
 
 interface Props {
   children: ReactNode;
+  session: Session | null;
 }
 
-const UserDropdown: FC<Props> = ({ children }) => {
-  const { data: session, status } = useSession();
+const UserDropdown = ({ children, session }: Props) => {
+  // const { data: session, status } = useSession();
 
   const router = useRouter();
   return (
@@ -27,7 +29,7 @@ const UserDropdown: FC<Props> = ({ children }) => {
       <DropdownMenuContent>
         <DropdownMenuGroup>
           <DropdownMenuLabel>Your Loving Menu</DropdownMenuLabel>
-          <DropdownMenuSeparator/>
+          <DropdownMenuSeparator />
           {session?.user?.role === "organizer" && (
             <DropdownMenuItem
               onClick={() => router.push("/dash/organizer/create-event")}
@@ -45,7 +47,7 @@ const UserDropdown: FC<Props> = ({ children }) => {
             <SettingsIcon className="h-4 w-4 mr-2" /> Settings
           </DropdownMenuItem>
         </DropdownMenuGroup>
-        <DropdownMenuSeparator/>
+        <DropdownMenuSeparator />
         <DropdownMenuGroup>
           {session?.user ? (
             <DropdownMenuItem onClick={() => signOut()}>
