@@ -42,6 +42,13 @@ export const compRouter = router({
               id: true,
             },
           },
+          participants: {
+            select: {
+              id: true,
+              email: true,
+              username: true,
+            },
+          },
         },
       });
       return comp;

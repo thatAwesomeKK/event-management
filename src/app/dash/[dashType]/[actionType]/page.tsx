@@ -17,14 +17,14 @@ export default async function Action({
 }: PageProps) {
   if (dashType === "organizer" && actionType === "create-event")
     return (
-      <div className="flex justify-center items-center">
+      <div className="flex justify-center items-center mt-10">
         <CreateEventForm />
       </div>
     );
   if (dashType === "organizer" && actionType === "create-comp") {
     const events = await serverClient.event.get();
     return (
-      <div className="flex justify-center items-center">
+      <div className="flex justify-center items-center mt-10">
         <CreateCompForm initialEvents={events} />
       </div>
     );

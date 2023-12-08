@@ -1,5 +1,7 @@
 import { serverClient } from "@/app/_trpc/serverClient";
+import Participants from "@/components/Dashboard/Participants";
 import CreateCompForm from "@/components/Forms/CreateCompForm";
+import { Card } from "@/components/ui/card";
 
 interface PageProps {
   params: {
@@ -12,9 +14,14 @@ const CompEdit = async ({ params: { compSlug } }: PageProps) => {
   const events = await serverClient.event.get();
 
   return (
-    <div className="flex justify-center items-center">
-      <CreateCompForm initialEvents={events} initialComp={comp!} />
-    </div>
+    <main className="flex justify-center items-start min-h-[100vh] mt-10">
+      <Card className="flex-1 flex justify-center items-center">
+        <CreateCompForm initialEvents={events} initialComp={comp!} />
+      </Card>
+      <div className="flex-1">
+        <Participants initialParticipants={comp?.participants} />
+      </div>
+    </main>
   );
 };
 
