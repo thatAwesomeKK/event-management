@@ -240,4 +240,41 @@ export const compRouter = router({
     });
     return dbComps;
   }),
+  createJudge: privateProcedure
+    .input(
+      z.object({ name: z.string(), password: z.string(), compId: z.string() })
+    )
+    .mutation(async ({ ctx, input: { name, password, compId } }) => {
+      const { user } = ctx;
+
+      const dbComp = await db.comp.findUnique({
+        where: {
+          id: compId,
+        },
+      });
+
+      if (!dbComp) {
+        throw new TRPCError({ code: "CONFLICT" });
+      }
+
+      const email = `${name}@${dbComp.slug}.com`;
+
+      const dbJudge = await db.judge.findUnique({
+        where: {
+          email,
+        },
+      });
+
+      if (dbJudge) {
+        throw new TRPCError({ code: "CONFLICT" });
+      }
+
+      await db.judge.create({
+        data: {
+          email,
+          password,
+          compId
+        },
+      });
+    }),
 });

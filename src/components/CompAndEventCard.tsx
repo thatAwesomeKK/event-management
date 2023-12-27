@@ -106,7 +106,7 @@ const CompAndEventCard = ({
             {comp && edit ? (
               <Link
                 className={buttonVariants({ className: "w-full py-6" })}
-                href={`all-events/${comp?.slug}`}
+                href={`all-events/${comp?.slug}/edit`}
               >
                 Edit
               </Link>

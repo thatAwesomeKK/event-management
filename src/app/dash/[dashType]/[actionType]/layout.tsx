@@ -1,4 +1,4 @@
-import Organizer from "../../../../components/Dashboard/Organizer"
+import Organizer from "../../../../components/Dashboard/OrganizerNav"
 
 export default function DashboardLayout({
     children,
