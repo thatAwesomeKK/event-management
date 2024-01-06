@@ -29,13 +29,16 @@ export const compRouter = router({
       return comps;
     }),
   getAdminComps: privateProcedure
-    .input(z.object({ slug: z.string() }))
-    .query(async ({ input: { slug } }) => {
-      const dbEventSlug = await db.event.findFirst({
-        where: {
-          slug,
-        },
-      });
+    .input(z.object({ eventId: z.string().nullable() }))
+    .query(async ({ input: { eventId } }) => {
+      let dbEventSlug;
+      if (eventId) {
+        dbEventSlug = await db.event.findFirst({
+          where: {
+            id: eventId,
+          },
+        });
+      }
 
       if (!dbEventSlug) {
         throw new TRPCError({ code: "BAD_REQUEST" });
@@ -273,7 +276,7 @@ export const compRouter = router({
         data: {
           email,
           password,
-          compId
+          compId,
         },
       });
     }),

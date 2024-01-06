@@ -1,24 +1,20 @@
-import CompAndEventCard from "../CompAndEventCard";
 import { serverClient } from "@/app/_trpc/serverClient";
-import CompsSection from "./CompsSection";
+import CardItem from "../CardItem";
 
 const Events = async () => {
   const events = await serverClient.event.getAdminEvents();
 
   return (
-    <section className="my-10 flex flex-col md:flex-row justify-center items-center max-w-[85vw] mx-auto">
+    <section className="my-10 flex flex-col md:flex-row justify-center items-center mx-auto">
       <div className="flex-1 flex justify-center items-center gap-5 overflow-y-scroll overflow-hidden scrollbar-hide">
         {events?.map((event, i) => (
-          <CompAndEventCard
+          <CardItem
             key={event.id}
             event={event}
-            where="dashboard"
-            edit={true}
+            href={`/dash/organizer/edit-events/${event?.slug}/edit`}
+            buttonTitle="Edit"
           />
         ))}
-      </div>
-      <div className="flex-1 flex justify-center items-center gap-5 overflow-y-scroll overflow-hidden scrollbar-hide">
-        <CompsSection />
       </div>
     </section>
   );

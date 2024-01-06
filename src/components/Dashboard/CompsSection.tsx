@@ -1,27 +1,27 @@
 "use client";
 import { trpc } from "@/app/_trpc/client";
-import { useSearchParams } from "next/navigation";
-import CompAndEventCard from "../CompAndEventCard";
+import CardItem from "../CardItem";
 
-const CompsSection = () => {
-  const searchParams = useSearchParams();
-  const event = searchParams.get("event");
+interface Props {
+  eventId: string;
+}
 
+const CompsSection = ({ eventId }: Props) => {
   const {
     data: comps,
     isLoading,
     isFetching,
-  } = trpc.comp.getAdminComps.useQuery({ slug: event! });
+  } = trpc.comp.getAdminComps.useQuery({ eventId });
 
-  if (isLoading && event) return <p>Loading...</p>;
+  if (isLoading && isFetching && eventId) return <p>Loading...</p>;
   return (
     <>
       {comps?.map((comp, i) => (
-        <CompAndEventCard
+        <CardItem
           key={comp.id}
           comp={comp}
-          where="dashboard"
-          edit={true}
+          href={`edit-comps/${comp.slug}`}
+          buttonTitle="Edit"
         />
       ))}
     </>

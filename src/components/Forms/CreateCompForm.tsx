@@ -58,7 +58,7 @@ const CreateCompForm = ({
   const [profileImg, setProfileImg] = useState<string | null>(
     initialComp?.poster || ""
   );
-  const [startDate, setStartDate] = useState(new Date());
+  const [startDate, setStartDate] = useState(update ? new Date(initialComp?.date!) : new Date());
   const [loading, setLoading] = useState(false);
   const uploadProfileImgRef = useRef<HTMLInputElement>(null);
 
@@ -93,31 +93,27 @@ const CreateCompForm = ({
     console.log({ ...values, poster: profileImg, date: startDate.toString() });
     console.log(update);
 
-    await compHook.mutateAsync(
-      {
-        id: initialComp?.id,
-        ...values,
-        poster: profileImg!,
-        date: startDate.toString(),
+    const updData: any = {
+      ...values,
+      poster: profileImg!,
+      date: startDate.toString(),
+    };
+    if (update) updData.id = initialComp?.id!;
+
+    await compHook.mutateAsync(updData, {
+      onSuccess: () => {
+        setLoading(false);
+        alertCall("success", `${update ? "Updated" : "Created"} Successfully`);
+        router.refresh();
       },
-      {
-        onSuccess: () => {
+      onError: (err) => {
+        if (err.data?.code === "CONFLICT") {
           setLoading(false);
-          alertCall(
-            "success",
-            `${update ? "Updated" : "Created"} Successfully`
-          );
+          alertCall("error", "Some Error occurred");
           router.refresh();
-        },
-        onError: (err) => {
-          if (err.data?.code === "CONFLICT") {
-            setLoading(false);
-            alertCall("error", "Some Error occurred");
-            router.refresh();
-          }
-        },
-      }
-    );
+        }
+      },
+    });
   }
 
   return (
