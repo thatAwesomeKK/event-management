@@ -1,6 +1,5 @@
-
 import { serverClient } from "@/app/_trpc/serverClient";
-import CompAndEventCard from "./CompAndEventCard";
+import CardItem from "./CardItem";
 
 interface Props {
   slug: string;
@@ -14,10 +13,11 @@ const Comp = async ({ slug, path }: Props) => {
     <section className="my-10 max-w-[85%] mx-auto">
       <div className="md:grid md:grid-cols-3 gap-10 justify-center items-center flex flex-col">
         {comps.map((comp, i) => (
-          <CompAndEventCard
+          <CardItem
             key={comp.id}
             comp={comp}
-            isRegistering
+            href={`/event/${slug}/${comp?.slug}`}
+            buttonTitle="Know More"
           />
         ))}
       </div>

@@ -22,6 +22,13 @@ import { trpc } from "@/app/_trpc/client";
 import { Loader2 } from "lucide-react";
 import { Card } from "../ui/card";
 import { alertCall } from "@/lib/toast/alertCall";
+import { Event } from "@prisma/client";
+import { useRouter } from "next/navigation";
+
+interface Props {
+  update?: boolean;
+  initialEvent?: Event;
+}
 
 const formSchema = z.object({
   title: z.string().min(6),
@@ -29,19 +36,28 @@ const formSchema = z.object({
   desc: z.string().min(10),
 });
 
-const CreateEventForm = () => {
-  const [profileImg, setProfileImg] = useState<string | null>(null);
-  const [startDate, setStartDate] = useState(new Date());
+export const dynamic = "force-dynamic";
+
+const CreateEventForm = ({ update = false, initialEvent }: Props) => {
+  const router = useRouter();
+  const [profileImg, setProfileImg] = useState<string | null>(
+    initialEvent?.poster || null
+  );
+  const [startDate, setStartDate] = useState(
+    update ? new Date(initialEvent?.date!) : new Date()
+  );
   const [loading, setLoading] = useState(false);
   const uploadProfileImgRef = useRef<HTMLInputElement>(null);
-  const createEvent = trpc.event.create.useMutation();
+  const eventHook = update
+    ? trpc.event.update.useMutation()
+    : trpc.event.create.useMutation();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      title: "",
-      venue: "",
-      desc: "",
+      title: initialEvent?.title || "",
+      venue: initialEvent?.venue || "",
+      desc: initialEvent?.description || "",
     },
   });
 
@@ -56,27 +72,30 @@ const CreateEventForm = () => {
   };
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    console.log(update);
+
     setLoading(true);
-    await createEvent.mutateAsync(
-      {
-        ...values,
-        poster: profileImg!,
-        date: startDate.toString(),
+    const updData: any = {
+      ...values,
+      poster: profileImg!,
+      date: startDate.toString(),
+    };
+    if (update) updData.id = initialEvent?.id!;
+
+    await eventHook.mutateAsync(updData, {
+      onSuccess: () => {
+        setLoading(false);
+        alertCall("success", `${update ? "Updated" : "Created"} Successfully`);
+        router.refresh();
       },
-      {
-        onSuccess: () => {
+      onError: (err) => {
+        if (err.data?.code === "CONFLICT") {
           setLoading(false);
-          form.reset();
-          alertCall("success", "Event Created!");
-        },
-        onError: (err) => {
-          if (err.data?.code === "CONFLICT") {
-            setLoading(false);
-            alertCall("error", "Some Error occurred");
-          }
-        },
-      }
-    );
+          alertCall("error", "Some Error occurred");
+          router.refresh();
+        }
+      },
+    });
   }
 
   return (

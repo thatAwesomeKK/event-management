@@ -1,8 +1,4 @@
 import React from "react";
-import Image from "next/image";
-import Link from "next/link";
-import "react-datepicker/dist/react-datepicker.css";
-import DateShowcase from "./DateShowcase";
 import {
   Card,
   CardContent,
@@ -11,9 +7,11 @@ import {
   CardHeader,
   CardTitle,
 } from "./ui/card";
-import { Separator } from "./ui/separator";
-import { Button, buttonVariants } from "./ui/button";
+import Image from "next/image";
 import { Comp, Event } from "@prisma/client";
+import DateShowcase from "./DateShowcase";
+import Link from "next/link";
+import { buttonVariants } from "./ui/button";
 
 interface Props {
   comp?: Comp & {
@@ -24,7 +22,8 @@ interface Props {
   isRegistering?: boolean;
   where?: string;
   edit?: boolean;
-  href?: string;
+  href: string;
+  buttonTitle: string;
 }
 
 interface Props {
@@ -32,14 +31,18 @@ interface Props {
   isRegistering?: boolean;
   where?: string;
   edit?: boolean;
+  href: string;
+  buttonTitle: string;
 }
 
-const CompAndEventCard = ({
+const CardItem = ({
   comp,
   event,
   isRegistering,
   where,
   edit = false,
+  href,
+  buttonTitle,
 }: Props) => {
   return (
     <Card className="shadow-lg shadow-secondary w-[22rem] lg:w-96">
@@ -71,54 +74,15 @@ const CompAndEventCard = ({
         </CardContent>
       )}
       <CardFooter className="flex-1 mt-2">
-        {event && edit && (
-          <Link
-            href={`?event=${event?.slug}`}
-            className={buttonVariants({ className: "w-full py-6" })}
-          >
-            Get Comps
-          </Link>
-        )}
-        {where !== "dashboard" ? (
-          <div className="w-full">
-            <Separator
-              className="my-1 w-[97%] mx-auto mb-2"
-              orientation="horizontal"
-            />
-
-            {isRegistering && !edit ? (
-              <Link
-                className={buttonVariants({ className: "w-full py-6" })}
-                href={`/event/${comp?.eventId}/${comp?.slug}`}
-              >
-                Learn More!
-              </Link>
-            ) : (
-              <Link
-                className={buttonVariants({ className: "w-full py-6" })}
-                href={`/event/${event?.slug}`}
-              >
-                Learn More!
-              </Link>
-            )}
-          </div>
-        ) : (
-          <>
-            {comp && edit ? (
-              <Link
-                className={buttonVariants({ className: "w-full py-6" })}
-                href={`all-events/${comp?.slug}/edit`}
-              >
-                Edit
-              </Link>
-            ) : (
-              ""
-            )}
-          </>
-        )}
+        <Link
+          href={href}
+          className={buttonVariants({ className: "w-full py-6" })}
+        >
+          {buttonTitle}
+        </Link>
       </CardFooter>
     </Card>
   );
 };
 
-export default CompAndEventCard;
+export default CardItem;

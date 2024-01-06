@@ -22,7 +22,7 @@ export const eventRouter = router({
       });
       return event;
     }),
-  //create an event  
+  //create an event
   create: privateProcedure
     .input(
       z.object({
@@ -66,7 +66,57 @@ export const eventRouter = router({
         },
       });
     }),
-  //fetch events belonging to organizer  
+  update: privateProcedure
+    .input(
+      z.object({
+        id: z.string().optional(),
+        poster: z.string(),
+        title: z.string(),
+        desc: z.string(),
+        date: z.string(),
+        venue: z.string(),
+      })
+    )
+    .mutation(
+      async ({ ctx, input: { id, poster, title, desc, date, venue } }) => {
+        const { user } = ctx;
+
+        const dbEvent = await db.event.findUnique({
+          where: {
+            id,
+          },
+        });
+
+        if (!dbEvent) {
+          throw new TRPCError({ code: "CONFLICT" });
+        }
+
+        let updEvent: any = {};
+
+        if (dbEvent.poster !== poster) {
+          const response = await cloudinary.uploader.upload(poster, {
+            resource_type: "auto",
+            folder: "event",
+          });
+          updEvent.poster = response.secure_url;
+        }
+        if (dbEvent.title !== title) updEvent.title = title;
+
+        if (dbEvent.description !== desc) updEvent.description = desc;
+
+        if (dbEvent.date !== date) updEvent.date = date;
+
+        if (dbEvent.venue !== venue) updEvent.venue = venue;
+
+        await db.event.update({
+          where: {
+            id,
+          },
+          data: updEvent,
+        });
+      }
+    ),
+  //fetch events belonging to organizer
   getAdminEvents: privateProcedure.query(async ({ ctx }) => {
     const { user } = ctx;
 
@@ -76,6 +126,6 @@ export const eventRouter = router({
       },
     });
 
-    return dbEvents
+    return dbEvents;
   }),
 });

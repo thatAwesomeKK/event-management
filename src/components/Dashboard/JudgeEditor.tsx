@@ -17,7 +17,7 @@ interface Props {
 
 const JudgeEditor = ({ comp }: Props) => {
   return (
-    <main>
+    <main className="w-full">
       <Dialog>
         <DialogTrigger>
           <Button>Add Judge</Button>
