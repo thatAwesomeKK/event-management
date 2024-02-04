@@ -4,6 +4,7 @@ import Events from "@/components/Dashboard/Events";
 import CreateCompForm from "@/components/Forms/CreateCompForm";
 import CreateEventForm from "@/components/Forms/CreateEventForm";
 import { Card } from "@/components/ui/card";
+import { getAuthSession } from "@/lib/config/authOptions";
 
 interface PageProps {
   params: {

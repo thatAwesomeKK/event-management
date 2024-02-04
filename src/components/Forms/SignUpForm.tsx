@@ -18,6 +18,7 @@ import { Loader2 } from "lucide-react";
 import { Card } from "../ui/card";
 import { alertCall } from "@/lib/toast/alertCall";
 import { useRouter } from "next/navigation";
+import { InputWithIcon } from "../ui/CustomShadcn/InputWithIcon";
 
 const formSchema = z.object({
   username: z.string().min(3).max(20),
@@ -102,7 +103,7 @@ const SignUpForm = () => {
               <FormItem>
                 <FormLabel>Password</FormLabel>
                 <FormControl>
-                  <Input placeholder="password" {...field} />
+                  <InputWithIcon type="password" placeholder="password" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>

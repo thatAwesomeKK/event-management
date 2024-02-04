@@ -4,6 +4,7 @@ import Participants from "@/components/Dashboard/Participants";
 import CreateCompForm from "@/components/Forms/CreateCompForm";
 import CreateEventForm from "@/components/Forms/CreateEventForm";
 import { Card } from "@/components/ui/card";
+import { getAuthSession } from "@/lib/config/authOptions";
 import React from "react";
 
 interface PageProps {
@@ -14,13 +15,15 @@ interface PageProps {
   };
 }
 
-const EditingPage = ({ params: { slug, editType, actionType } }: PageProps) => {
+const EditingPage = async ({
+  params: { slug, editType, actionType },
+}: PageProps) => {
   const editChooser = async () => {
     if (editType === "edit" && actionType === "edit-events") {
       const event = await serverClient.event.getBySlug({ slug });
       return (
         <Card className="flex-1 flex justify-center items-center">
-          <CreateEventForm initialEvent={event!} update={true}/>
+          <CreateEventForm initialEvent={event!} update={true} />
         </Card>
       );
     }

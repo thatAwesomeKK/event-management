@@ -1,9 +1,7 @@
-import React from 'react'
+import React from "react";
 
 const Prof = () => {
-  return (
-    <div>Prof</div>
-  )
-}
+  return;
+};
 
-export default Prof
+export default Prof;
