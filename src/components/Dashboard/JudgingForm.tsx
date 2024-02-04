@@ -1,7 +1,7 @@
 "use client";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import React, { useState } from "react";
 import * as z from "zod";
+import { Card } from "../ui/card";
 import {
   Form,
   FormControl,
@@ -10,43 +10,36 @@ import {
   FormLabel,
   FormMessage,
 } from "../ui/form";
-import { Button } from "../ui/button";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "../ui/input";
-import { useState } from "react";
-import { signIn } from "next-auth/react";
-import { Card } from "../ui/card";
-import { EyeIcon, EyeOffIcon, Loader2 } from "lucide-react";
-import { alertCall } from "@/lib/toast/alertCall";
-import { InputWithIcon } from "../ui/CustomShadcn/InputWithIcon";
+import { Button } from "../ui/button";
+import { Loader2 } from "lucide-react";
 
 const formSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(6),
+  field1: z.string().email(),
 });
 
-const SignInForm = () => {
+const JudgingForm = () => {
   const [loading, setLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      email: "",
-      password: "",
+      field1: "",
     },
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
       setLoading(true);
-      await signIn("credentials", values);
-      alertCall("success", "Signed in successfully!");
+      //   await signIn("credentials", values);
+      //   alertCall("success", "Signed in successfully!");
       setLoading(false);
     } catch (error) {
-      alertCall("error", "Some error occurred!");
+      //   alertCall("error", "Some error occurred!");
       setLoading(true);
     }
   }
-
   return (
     <Card>
       <Form {...form}>
@@ -56,34 +49,30 @@ const SignInForm = () => {
         >
           <FormField
             control={form.control}
-            name="email"
+            name="field1"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Email</FormLabel>
+                <FormLabel>Field 1</FormLabel>
                 <FormControl>
-                  <Input placeholder="Email" {...field} />
+                  <Input placeholder="field1" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
-          <FormField
+          {/* <FormField
             control={form.control}
             name="password"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Password</FormLabel>
                 <FormControl>
-                  <InputWithIcon
-                    type="password"
-                    placeholder="password"
-                    {...field}
-                  />
+                  <Input placeholder="password" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
-          />
+          /> */}
           <Button disabled={loading} type="submit">
             {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : ""}
             SignIn
@@ -94,4 +83,4 @@ const SignInForm = () => {
   );
 };
 
-export default SignInForm;
+export default JudgingForm;

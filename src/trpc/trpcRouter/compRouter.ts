@@ -243,6 +243,36 @@ export const compRouter = router({
     });
     return dbComps;
   }),
+  getParticipantJudge: privateProcedure.query(async ({ ctx }) => {
+    const { user } = ctx;
+    const dbJudge = await db.judge.findFirst({
+      where: {
+        email: user.id,
+      },
+    });
+
+    const dbComps = await db.comp.findFirst({
+      where: {
+        id: dbJudge?.compId,
+      },
+      include: {
+        event: {
+          select: {
+            title: true,
+            id: true,
+          },
+        },
+        participants: {
+          select: {
+            id: true,
+            email: true,
+            username: true,
+          },
+        },
+      },
+    });
+    return dbComps;
+  }),
   createJudge: privateProcedure
     .input(
       z.object({ name: z.string(), password: z.string(), compId: z.string() })

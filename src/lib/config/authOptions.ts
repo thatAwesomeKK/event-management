@@ -16,11 +16,20 @@ const authOptions: NextAuthOptions = {
           //   await connectToMongo();
           const { email, password } = credentials!;
 
-          const dbUser = await db.user.findFirst({
+          let dbUser;
+
+          dbUser = await db.user.findFirst({
             where: {
               email,
             },
           });
+
+          if (!dbUser)
+            dbUser = await db.judge.findFirst({
+              where: {
+                email,
+              },
+            });
 
           if (!dbUser) return null;
 
@@ -56,7 +65,7 @@ const authOptions: NextAuthOptions = {
         session.user.id = token.id;
         session.user.coins = token.coins;
         session.user.username = token.username;
-        session.user.role = token.role
+        session.user.role = token.role;
         // session.user.pfp = token.pfp;
         // session.user.username = token.username;
       }
@@ -69,6 +78,7 @@ export const getAuthSession = () => getServerSession(authOptions);
 export default authOptions;
 
 const signInUser = async (user: any, password: string) => {
+  if (user.role === "judge") return user;
   const passwordCompare = await bcrypt.compare(password, user.password);
   if (passwordCompare) return user;
 };

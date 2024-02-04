@@ -37,6 +37,13 @@ const UserDropdown = ({ children, session }: Props) => {
               <UserCircle2 className="h-4 w-4 mr-2" /> Create Event/Comp
             </DropdownMenuItem>
           )}
+          {session?.user?.role === "judge" && (
+            <DropdownMenuItem
+              onClick={() => router.push("/dash/organizer/create-event")}
+            >
+              <UserCircle2 className="h-4 w-4 mr-2" /> Judge an Event
+            </DropdownMenuItem>
+          )}
           {session?.user?.role === "participant" && (
             <DropdownMenuItem onClick={() => router.push("/dash/participant")}>
               <UserCircle2 className="h-4 w-4 mr-2" />
