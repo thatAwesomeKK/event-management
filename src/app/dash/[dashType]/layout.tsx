@@ -37,6 +37,7 @@ export default async function DashLayout({
       >
         {children}
       </section>
+
     </main>
   );
 }
