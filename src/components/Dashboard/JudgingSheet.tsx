@@ -33,7 +33,7 @@ const JudgingSheet = ({ initialParticipants }: Props) => {
   });
   return (
     <Table>
-      <TableCaption>A list of your recent invoices.</TableCaption>
+      <TableCaption>A list of the participants.</TableCaption>
       <TableHeader>
         <TableRow>
           <TableHead className="w-[100px]">Name</TableHead>
