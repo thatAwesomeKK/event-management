@@ -35,7 +35,7 @@ export default async function EditLayout({
   return (
     <main className="flex justify-center space-x-10">
       <section className="w-[50%]">
-        <Card className="min-h-[87vh] px-2">{editDashChooser()}</Card>
+        <Card className="h-[87vh] px-2">{editDashChooser()}</Card>
       </section>
       <section className="w-[50%]">{children}</section>
     </main>
