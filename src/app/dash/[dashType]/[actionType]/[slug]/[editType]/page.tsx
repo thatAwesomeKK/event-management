@@ -4,7 +4,6 @@ import Participants from "@/components/Dashboard/Participants";
 import CreateCompForm from "@/components/Forms/CreateCompForm";
 import CreateEventForm from "@/components/Forms/CreateEventForm";
 import { Card } from "@/components/ui/card";
-import { getAuthSession } from "@/lib/config/authOptions";
 import React from "react";
 
 interface PageProps {
