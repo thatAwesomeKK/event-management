@@ -9,10 +9,9 @@ import {
   DialogTrigger,
 } from "../ui/dialog";
 import CreateJudge from "../Forms/CreateJudge";
-import { Comp } from "@prisma/client";
 
 interface Props {
-  comp: Comp;
+  comp: any;
 }
 
 const JudgeEditor = ({ comp }: Props) => {

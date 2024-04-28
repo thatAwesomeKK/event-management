@@ -46,19 +46,16 @@ const CreateCompForm = ({
   update = false,
 }: {
   initialEvents?: Event[];
-  initialComp?: Comp & {
-    event: {
-      title: string;
-      id: string;
-    };
-  };
+  initialComp?: any;
   update?: boolean;
 }) => {
   const router = useRouter();
   const [profileImg, setProfileImg] = useState<string | null>(
     initialComp?.poster || ""
   );
-  const [startDate, setStartDate] = useState(update ? new Date(initialComp?.date!) : new Date());
+  const [startDate, setStartDate] = useState(
+    update ? new Date(initialComp?.date!) : new Date()
+  );
   const [loading, setLoading] = useState(false);
   const uploadProfileImgRef = useRef<HTMLInputElement>(null);
 
