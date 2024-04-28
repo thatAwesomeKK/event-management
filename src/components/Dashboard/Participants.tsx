@@ -1,7 +1,6 @@
 "use client";
 import { ArrowUpDown, ChevronDown, GripHorizontal } from "lucide-react";
 import { Button } from "../ui/button";
-import { Checkbox } from "../ui/checkbox";
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -33,7 +32,6 @@ import {
   TableHeader,
   TableRow,
 } from "../ui/table";
-import { Card } from "../ui/card";
 
 interface Props {
   initialParticipants: any;
@@ -43,6 +41,7 @@ export type Participants = {
   id: string;
   username: string;
   email: string;
+  score: number;
 };
 
 export const columns: ColumnDef<Participants>[] = [
@@ -100,8 +99,7 @@ export const columns: ColumnDef<Participants>[] = [
               Copy Participant ID
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>View customer</DropdownMenuItem>
-            <DropdownMenuItem>View payment details</DropdownMenuItem>
+            <DropdownMenuItem>Remove</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       );

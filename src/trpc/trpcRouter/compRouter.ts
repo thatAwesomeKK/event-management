@@ -4,6 +4,9 @@ import * as z from "zod";
 import { db } from "@/lib/config/db";
 import slugify from "slugify";
 import { TRPCError } from "@trpc/server";
+import { JsonArray } from "@prisma/client/runtime/library";
+import { Participants } from "@/components/Dashboard/JudgingSheet";
+import { log } from "console";
 
 export const compRouter = router({
   //fetch all the comps of an event
@@ -75,7 +78,29 @@ export const compRouter = router({
           },
         },
       });
-      return comp;
+      const judgedScores = await db.judgeScore.findFirst({
+        where: {
+          compId: comp?.id,
+        },
+      });
+
+      let newParticipants: any = [];
+      comp?.participants.forEach((participant) => {
+        const score = judgedScores?.participantScore.find(
+          (p) => p.participantId === participant.id
+        );
+        newParticipants.push({
+          ...participant,
+          score: score?.score || null,
+        });
+      });
+
+      const newComp = {
+        ...comp,
+        participants: newParticipants,
+      };
+
+      return newComp;
     }),
   //create a comp
   create: privateProcedure
@@ -236,6 +261,7 @@ export const compRouter = router({
       include: {
         event: {
           select: {
+            slug: true,
             title: true,
           },
         },
@@ -256,12 +282,6 @@ export const compRouter = router({
         id: dbJudge?.compId,
       },
       include: {
-        event: {
-          select: {
-            title: true,
-            id: true,
-          },
-        },
         participants: {
           select: {
             id: true,
@@ -271,7 +291,40 @@ export const compRouter = router({
         },
       },
     });
-    return dbComps;
+
+    const judgedScores = await db.judgeScore.findFirst({
+      where: {
+        judgeId: dbJudge?.id,
+        compId: dbJudge?.compId,
+      },
+      select: {
+        participantScore: {
+          select: {
+            participantId: true,
+            score: true,
+          },
+        },
+      },
+    });
+
+    let newParticipants: any = [];
+
+    dbComps?.participants.forEach((participant) => {
+      const score = judgedScores?.participantScore.find(
+        (p) => p.participantId === participant.id
+      );
+      newParticipants.push({
+        ...participant,
+        score: score?.score || 0,
+      });
+    });
+
+    const newComp = {
+      ...dbComps,
+      participants: newParticipants,
+    };
+
+    return newComp;
   }),
   createJudge: privateProcedure
     .input(
@@ -310,4 +363,127 @@ export const compRouter = router({
         },
       });
     }),
+  judgeMarks: privateProcedure
+    .input(
+      z.object({
+        marks: z.object({
+          field1: z.number(),
+          field2: z.number(),
+          field3: z.number(),
+        }),
+        participantId: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input: { marks, participantId } }) => {
+      const { user } = ctx;
+      const dbJudge = await db.judge.findFirst({
+        where: {
+          id: user.id,
+        },
+      });
+      if (!dbJudge) {
+        throw new TRPCError({ code: "CONFLICT" });
+      }
+
+      const dbJudgeScore = await db.judgeScore.findFirst({
+        where: {
+          judgeId: dbJudge.id,
+          compId: dbJudge.compId,
+        },
+      });
+
+      if (!dbJudgeScore) {
+        return await db.judgeScore.create({
+          data: {
+            judgeId: dbJudge.id,
+            compId: dbJudge.compId,
+            participantScore: {
+              set: {
+                participantId,
+                score: marks.field1 + marks.field2 + marks.field3,
+              },
+            },
+          },
+        });
+      }
+
+      const userScore = await db.judgeScore.findFirst({
+        where: {
+          participantScore: {
+            some: {
+              participantId,
+            },
+          },
+        },
+      });
+      if (userScore) {
+        throw new TRPCError({ code: "CONFLICT" });
+      }
+
+      await db.judgeScore.update({
+        where: {
+          id: dbJudgeScore.id,
+        },
+        data: {
+          participantScore: {
+            push: {
+              participantId,
+              score: marks.field1 + marks.field2 + marks.field3,
+            },
+          },
+        },
+      });
+      await chooseWinner(dbJudge.compId);
+    }),
 });
+
+const chooseWinner = async (compId: string) => {
+  const dbJudgeScore = await db.judgeScore.findFirst({
+    where: {
+      compId,
+    },
+    select: {
+      participantScore: {
+        select: {
+          participantId: true,
+          score: true,
+        },
+      },
+    },
+  });
+
+  let startChoosingWinner = false;
+  dbJudgeScore?.participantScore.forEach((score) => {
+    if (score.score !== 0) {
+      startChoosingWinner = true;
+    }
+  });
+  log(startChoosingWinner);
+  if (!startChoosingWinner) return;
+
+  // let winner: any = {
+  //   participantId: "",
+  //   score: 0,
+  // };
+
+  // dbJudgeScore.forEach((judge) => {
+  //   judge.participantScore.forEach((score) => {
+  //     if (score.score > winner.score) {
+  //       winner = score;
+  //     }
+  //   });
+  // });
+
+  // await db.comp.update({
+  //   where: {
+  //     id: compId,
+  //   },
+  //   data: {
+  //     winner: {
+  //       connect: {
+  //         id: winner.participantId,
+  //       },
+  //     },
+  //   },
+  // });
+};

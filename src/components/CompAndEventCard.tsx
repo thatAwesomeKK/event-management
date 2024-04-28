@@ -19,6 +19,7 @@ interface Props {
   comp?: Comp & {
     event?: {
       title: string;
+      slug: string;
     };
   };
   isRegistering?: boolean;
@@ -112,7 +113,12 @@ const CompAndEventCard = ({
                 Edit
               </Link>
             ) : (
-              ""
+              <Link
+                className={buttonVariants({ className: "w-full py-6" })}
+                href={`/event/${comp?.event?.slug}/${comp?.slug}`}
+              >
+                Results
+              </Link>
             )}
           </>
         )}
