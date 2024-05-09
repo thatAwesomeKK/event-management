@@ -16,7 +16,6 @@ import { trpc } from "@/app/_trpc/client";
 import { alertCall } from "@/lib/toast/alertCall";
 import { useRouter } from "next/navigation";
 import { Label } from "../ui/label";
-import { set } from "zod";
 
 export type Participants = {
   id: string;
