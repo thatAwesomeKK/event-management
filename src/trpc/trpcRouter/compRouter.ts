@@ -424,6 +424,7 @@ export const compRouter = router({
         where: {
           judgeId: dbJudge.id,
           compId: dbJudge.compId,
+
           participantScore: {
             some: {
               participantId,
@@ -431,7 +432,6 @@ export const compRouter = router({
           },
         },
       });
-
       if (userScore) {
         throw new TRPCError({ code: "CONFLICT" });
       }
@@ -449,7 +449,6 @@ export const compRouter = router({
           },
         },
       });
-      // await chooseWinner(dbJudge.compId);
     }),
 });
 
@@ -476,30 +475,4 @@ const chooseWinner = async (compId: string) => {
   });
   log(startChoosingWinner);
   if (!startChoosingWinner) return;
-
-  // let winner: any = {
-  //   participantId: "",
-  //   score: 0,
-  // };
-
-  // dbJudgeScore.forEach((judge) => {
-  //   judge.participantScore.forEach((score) => {
-  //     if (score.score > winner.score) {
-  //       winner = score;
-  //     }
-  //   });
-  // });
-
-  // await db.comp.update({
-  //   where: {
-  //     id: compId,
-  //   },
-  //   data: {
-  //     winner: {
-  //       connect: {
-  //         id: winner.participantId,
-  //       },
-  //     },
-  //   },
-  // });
 };
