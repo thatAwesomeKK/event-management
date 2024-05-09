@@ -28,7 +28,7 @@ model Judge {
   role       String      @default("judge")
   comp       Comp        @relation(fields: [compId], references: [id])
   compId     String      @db.ObjectId
-  JudgeScore JudgeScore?
+  // JudgeScore JudgeScore?
   createdAt  DateTime    @default(now())
   updatedAt  DateTime    @updatedAt
 }
@@ -63,17 +63,17 @@ model Comp {
   participantIDs String[]    @db.ObjectId
   participants   User[]      @relation(fields: [participantIDs], references: [id])
   Judges         Judge[]
-  JudgeScores    JudgeScore?
+  // JudgeScores    JudgeScore?
   createdAt      DateTime    @default(now())
   updatedAt      DateTime    @updatedAt
 }
 
 model JudgeScore {
   id               String   @id @default(auto()) @map("_id") @db.ObjectId
-  judge            Judge    @relation(fields: [judgeId], references: [id])
-  judgeId          String   @unique @db.ObjectId
-  comp             Comp     @relation(fields: [compId], references: [id])
-  compId           String   @unique @db.ObjectId
+  // judge            Judge    @relation(fields: [judgeId], references: [id])
+  judgeId          String   @db.ObjectId
+  // comp             Comp     @relation(fields: [compId], references: [id])
+  compId           String   @db.ObjectId
   participantScore Score[]
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt

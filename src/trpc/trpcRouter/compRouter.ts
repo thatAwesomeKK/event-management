@@ -78,7 +78,7 @@ export const compRouter = router({
           },
         },
       });
-      const judgedScores = await db.judgeScore.findFirst({
+      const judgedScores = await db.judgeScore.findMany({
         where: {
           compId: comp?.id,
         },
@@ -86,13 +86,25 @@ export const compRouter = router({
 
       let newParticipants: any = [];
       comp?.participants.forEach((participant) => {
-        const score = judgedScores?.participantScore.find(
-          (p) => p.participantId === participant.id
-        );
-        newParticipants.push({
-          ...participant,
-          score: score?.score || null,
-        });
+
+        for (let judgedScore of judgedScores) {
+          const newParticipant = newParticipants.find(
+            (p: any) => p.id === participant.id
+          );
+
+          const score = judgedScore.participantScore.find(
+            (p) => p.participantId === participant.id
+          );
+
+          if (newParticipant) {
+            newParticipant.score += score?.score || 0;
+            continue;
+          }
+          newParticipants.push({
+            ...participant,
+            score: score?.score || 0,
+          });
+        }
       });
 
       const newComp = {
@@ -273,7 +285,7 @@ export const compRouter = router({
     const { user } = ctx;
     const dbJudge = await db.judge.findFirst({
       where: {
-        email: user.id,
+        id: user.id,
       },
     });
 
@@ -381,6 +393,7 @@ export const compRouter = router({
           id: user.id,
         },
       });
+
       if (!dbJudge) {
         throw new TRPCError({ code: "CONFLICT" });
       }
@@ -409,6 +422,8 @@ export const compRouter = router({
 
       const userScore = await db.judgeScore.findFirst({
         where: {
+          judgeId: dbJudge.id,
+          compId: dbJudge.compId,
           participantScore: {
             some: {
               participantId,
@@ -416,6 +431,7 @@ export const compRouter = router({
           },
         },
       });
+
       if (userScore) {
         throw new TRPCError({ code: "CONFLICT" });
       }
@@ -433,7 +449,7 @@ export const compRouter = router({
           },
         },
       });
-      await chooseWinner(dbJudge.compId);
+      // await chooseWinner(dbJudge.compId);
     }),
 });
 
