@@ -1,16 +1,5 @@
 import Image from "next/image";
-import {
-  Agbalumo,
-  Handlee,
-  Lilita_One,
-  Lobster,
-  Marhey,
-  Pacifico,
-  Patua_One,
-  Permanent_Marker,
-  Potta_One,
-  Russo_One,
-} from "next/font/google";
+import { Handlee, Pacifico, Permanent_Marker } from "next/font/google";
 import { serverClient } from "@/app/_trpc/serverClient";
 import DateShowcase from "@/components/DateShowcase";
 import ParticipateButton from "@/components/ParticipateButton";
