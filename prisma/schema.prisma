@@ -68,6 +68,7 @@ model Comp {
 
 model JudgeScore {
   id               String   @id @default(auto()) @map("_id") @db.ObjectId
+  judgeId          String   @db.ObjectId
   compId           String   @db.ObjectId
   participantScore Score[]
   createdAt        DateTime @default(now())

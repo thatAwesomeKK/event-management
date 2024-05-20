@@ -86,6 +86,7 @@ export const compRouter = router({
 
       let newParticipants: any = [];
       comp?.participants.forEach((participant) => {
+
         for (let judgedScore of judgedScores) {
           const newParticipant = newParticipants.find(
             (p: any) => p.id === participant.id
