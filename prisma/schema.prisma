@@ -76,6 +76,6 @@ model JudgeScore {
 
 type Score {
   participantId String   @db.ObjectId
-  judgeId       String[] @default([]) @db.ObjectId
+  judgeId       String[] @db.ObjectId
   score         Int?
 }
