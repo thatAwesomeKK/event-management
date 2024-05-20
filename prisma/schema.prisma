@@ -62,8 +62,8 @@ model Comp {
   participantIDs String[] @db.ObjectId
   participants   User[]   @relation(fields: [participantIDs], references: [id])
   Judges         Judge[]
-  createdAt      DateTime    @default(now())
-  updatedAt      DateTime    @updatedAt
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 }
 
 model JudgeScore {
@@ -76,7 +76,6 @@ model JudgeScore {
 
 type Score {
   participantId String   @db.ObjectId
-  judgeId       String[] @db.ObjectId
+  judgeId       String[] @default([]) @db.ObjectId
   score         Int?
 }
-
