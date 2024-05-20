@@ -18,8 +18,8 @@ const JudgeEditor = ({ comp }: Props) => {
   return (
     <main className="w-full">
       <Dialog>
-        <DialogTrigger>
-          <Button>Add Judge</Button>
+        <DialogTrigger className="w-full mx-auto my-4">
+          <Button className="w-60">Add Judge</Button>
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>

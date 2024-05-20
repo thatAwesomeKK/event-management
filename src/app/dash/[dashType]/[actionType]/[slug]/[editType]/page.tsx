@@ -1,5 +1,6 @@
 import { serverClient } from "@/app/_trpc/serverClient";
 import JudgeEditor from "@/components/Dashboard/JudgeEditor";
+import ListJudge from "@/components/Dashboard/ListJudge";
 import Participants from "@/components/Dashboard/Participants";
 import CreateCompForm from "@/components/Forms/CreateCompForm";
 import CreateEventForm from "@/components/Forms/CreateEventForm";
@@ -49,9 +50,11 @@ const EditingPage = async ({
     }
     if (editType === "judge" && actionType === "edit-comps") {
       const comp = await serverClient.comp.getBySlug({ slug });
+      const judges = await serverClient.comp.fetchJudge();
       return (
-        <Card className="flex-1 flex justify-center items-center">
+        <Card className="flex-1 flex flex-col justify-center items-center">
           <JudgeEditor comp={comp!} />
+          <ListJudge judges={judges}/>
         </Card>
       );
     }

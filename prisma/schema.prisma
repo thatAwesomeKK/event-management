@@ -8,29 +8,28 @@ generator client {
 }
 
 model User {
-  id               String             @id @default(auto()) @map("_id") @db.ObjectId
-  username         String
-  email            String             @unique
-  password         String
-  role             String             @default("participant")
-  coins            Int                @default(0)
-  events           Event[]
-  compIDs          String[]           @db.ObjectId
-  comps            Comp[]             @relation(fields: [compIDs], references: [id])
-  createdAt        DateTime           @default(now())
-  updatedAt        DateTime           @updatedAt
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  username  String
+  email     String   @unique
+  password  String
+  role      String   @default("participant")
+  coins     Int      @default(0)
+  events    Event[]
+  compIDs   String[] @db.ObjectId
+  comps     Comp[]   @relation(fields: [compIDs], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Judge {
-  id         String      @id @default(auto()) @map("_id") @db.ObjectId
-  email      String      @unique
-  password   String
-  role       String      @default("judge")
-  comp       Comp        @relation(fields: [compId], references: [id])
-  compId     String      @db.ObjectId
-  // JudgeScore JudgeScore?
-  createdAt  DateTime    @default(now())
-  updatedAt  DateTime    @updatedAt
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  email     String   @unique
+  password  String
+  role      String   @default("judge")
+  comp      Comp     @relation(fields: [compId], references: [id])
+  compId    String   @db.ObjectId
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Event {
@@ -49,30 +48,27 @@ model Event {
 }
 
 model Comp {
-  id             String      @id @default(auto()) @map("_id") @db.ObjectId
-  slug           String      @unique
+  id             String   @id @default(auto()) @map("_id") @db.ObjectId
+  slug           String   @unique
   poster         String
   title          String
   description    String
   venue          String
   date           String
-  eventId        String      @db.ObjectId
-  event          Event       @relation(fields: [eventId], references: [id])
-  isRegistering  Boolean     @default(false)
-  isVerified     Boolean     @default(false)
-  participantIDs String[]    @db.ObjectId
-  participants   User[]      @relation(fields: [participantIDs], references: [id])
+  eventId        String   @db.ObjectId
+  event          Event    @relation(fields: [eventId], references: [id])
+  isRegistering  Boolean  @default(false)
+  isVerified     Boolean  @default(false)
+  participantIDs String[] @db.ObjectId
+  participants   User[]   @relation(fields: [participantIDs], references: [id])
   Judges         Judge[]
   // JudgeScores    JudgeScore?
-  createdAt      DateTime    @default(now())
-  updatedAt      DateTime    @updatedAt
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 }
 
 model JudgeScore {
   id               String   @id @default(auto()) @map("_id") @db.ObjectId
-  // judge            Judge    @relation(fields: [judgeId], references: [id])
-  judgeId          String   @db.ObjectId
-  // comp             Comp     @relation(fields: [compId], references: [id])
   compId           String   @db.ObjectId
   participantScore Score[]
   createdAt        DateTime @default(now())
@@ -80,6 +76,8 @@ model JudgeScore {
 }
 
 type Score {
-  participantId String @db.ObjectId
-  score         Int
+  participantId String   @db.ObjectId
+  judgeId       String[] @db.ObjectId
+  score         Int?
 }
+
