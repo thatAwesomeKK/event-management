@@ -86,7 +86,6 @@ export const compRouter = router({
 
       let newParticipants: any = [];
       comp?.participants.forEach((participant) => {
-
         for (let judgedScore of judgedScores) {
           const newParticipant = newParticipants.find(
             (p: any) => p.id === participant.id
@@ -455,7 +454,7 @@ export const compRouter = router({
 
       await db.judgeScore.update({
         where: {
-          id: userScore?.id,
+          id: userScore?.id || dbJudgeScore?.id,
         },
         data: {
           participantScore: {
@@ -491,9 +490,9 @@ export const compRouter = router({
       throw new TRPCError({ code: "CONFLICT" });
     }
     const judges = await db.judge.findMany({
-      select:{
-        email:true,
-      }
+      select: {
+        email: true,
+      },
     });
     return judges;
   }),
