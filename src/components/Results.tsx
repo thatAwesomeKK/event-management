@@ -7,14 +7,14 @@ interface Props {
 }
 
 const Results = ({ participants }: Props) => {
-  participants = participants.sort(function (a: any, b: any) {
+  participants.sort(function (a: any, b: any) {
     return b.score - a.score;
   });
+  const top3Participants = participants.slice(0, 3);
 
   return (
     <div className="flex justify-center items-center gap-10 mb-10">
-      {participants.map((participant, index) => {
-        if (index === 3) return;
+      {top3Participants.map((participant, index) => {
         return (
           <ResultsCard key={index} position={index} participant={participant} />
         );

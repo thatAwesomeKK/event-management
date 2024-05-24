@@ -41,12 +41,13 @@ const JudgingSheet = ({ initialParticipants }: Props) => {
 
   const handleMarks = async (participantId: string) => {
     setLoading(true);
-    console.log(marks, participantId);
 
     const data: any = {
       marks,
       participantId,
     };
+
+    console.log(data);
 
     await judgeHook.mutateAsync(data, {
       onSuccess: () => {
