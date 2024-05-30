@@ -86,7 +86,7 @@ const CompInfo = async ({ params: { compSlug } }: pageProps) => {
           Results
         </h2>
         {/* Results component */}
-        <Results participants={comp.participants} />
+        <Results participants={comp?.participants} />
       </section>
     </main>
   );

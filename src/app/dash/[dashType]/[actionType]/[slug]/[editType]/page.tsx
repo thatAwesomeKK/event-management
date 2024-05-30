@@ -42,6 +42,8 @@ const EditingPage = async ({
     }
     if (editType === "participants" && actionType === "edit-comps") {
       const comp = await serverClient.comp.getBySlug({ slug });
+      // console.log(comp);
+      
       return (
         <Card className="flex-1 min-h-[87vh] px-2">
           <Participants initialParticipants={comp?.participants} />

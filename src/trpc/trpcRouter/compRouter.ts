@@ -78,12 +78,15 @@ export const compRouter = router({
           },
         },
       });
+
       const judgedScores = await db.judgeScore.findMany({
         where: {
           compId: comp?.id,
         },
       });
-
+      if (judgedScores.length < 1) {
+        return comp;
+      }
       let newParticipants: any = [];
       comp?.participants.forEach((participant) => {
         for (let judgedScore of judgedScores) {
